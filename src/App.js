@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react';
+import { resizeWidth } from './redux/slice/windowDimensionSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+// components
+import Desktop from './components/desktop';
+import Mobile from './components/mobile';
+
+const App = () => {
+  const updatedWidth = useSelector((state) => state.windowDimension.width);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const resize = dispatch(resizeWidth({ width: window.innerWidth }));
+      console.log(resize);
+    };
+
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, [dispatch]);
+
+  return <> {updatedWidth <= 900 ? <Mobile /> : <Desktop />} </>;
+};
 
 export default App;
